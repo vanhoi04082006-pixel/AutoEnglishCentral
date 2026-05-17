@@ -39,6 +39,12 @@ namespace AutoWatchMultipleVideos
             options.AddArgument("--mute-audio");
             options.AddArgument("--autoplay-policy=no-user-gesture-required");
 
+            // --- THÊM 3 DÒNG NÀY ĐỂ TỰ ĐỘNG CẤP QUYỀN (ALLOW) ---
+            // Giá trị 1 = Allow (Cho phép), Giá trị 2 = Block (Chặn)
+            options.AddUserProfilePreference("profile.default_content_setting_values.media_stream_mic", 1);    // Cho phép Microphone
+            options.AddUserProfilePreference("profile.default_content_setting_values.media_stream_camera", 1); // Cho phép Camera
+            options.AddUserProfilePreference("profile.default_content_setting_values.notifications", 1);       // Cho phép Thông báo
+
             using (IWebDriver driver = new ChromeDriver(options))
             {
                 // ==========================================
@@ -125,8 +131,11 @@ namespace AutoWatchMultipleVideos
     
     var v = videos[0];
 
-    // Bơm tốc độ phát video lên x5 lần (Bạn có thể đổi số 5.0 thành 10.0 nếu muốn)
     v.playbackRate = 5.0;
+
+    if (!v.paused) {
+        window.guessIndex = 0;
+    }
 
     if (v.paused && v.currentTime < 0.5) {
         v.play();
@@ -138,8 +147,83 @@ namespace AutoWatchMultipleVideos
     }
     
     if (v.paused && v.currentTime >= 0.5) {
-        var skipBtn = document.querySelector('.fa-step-forward');
-        if (skipBtn) return 'SKIP_TO_NEXT'; 
+        
+        // --- ƯU TIÊN 1: XỬ LÝ FORM CÀI ĐẶT ---
+        var settingsMenu = document.querySelector('.settings');
+        if (settingsMenu && settingsMenu.offsetParent !== null) { 
+            var mcBtn = document.querySelector('.multiple-choice-btn');
+            if (mcBtn && !mcBtn.classList.contains('selected')) {
+                mcBtn.click();
+                return 'CLICKED_MULTIPLE_CHOICE';
+            } else {
+                var closeX = document.querySelector('.settings-header-close-button');
+                var closeAlt = document.querySelector('.settings-wrapper-close-btn');
+                if (closeX && closeX.offsetParent !== null) { closeX.click(); return 'CLOSED_SETTINGS_X'; } 
+                else if (closeAlt && closeAlt.offsetParent !== null) { closeAlt.click(); return 'CLOSED_SETTINGS_ALT'; }
+            }
+        }
+
+        // --- ƯU TIÊN 2: NÚT 'THỬ LẠI' VỚI HARD CLICK (VƯỢT ANGULAR) ---
+        var tryAgainBtn = document.querySelector('.button-incorrect');
+        
+        // Càn quét tìm bằng Text nếu class không hoạt động
+        if (!tryAgainBtn) {
+            var spans = document.querySelectorAll('span');
+            for(var i=0; i < spans.length; i++) {
+                if(spans[i].textContent.trim() === 'Thử lại') {
+                    // Lấy thẻ div .button bọc bên ngoài nó
+                    tryAgainBtn = spans[i].closest('.button') || spans[i];
+                    break;
+                }
+            }
+        }
+
+        if (tryAgainBtn) {
+            window.guessIndex = (window.guessIndex || 0) + 1; 
+            
+            // 1. Click thường
+            tryAgainBtn.click(); 
+            
+            // 2. Click vào thẻ span chữ bên trong
+            var innerSpan = tryAgainBtn.querySelector('span');
+            if (innerSpan) innerSpan.click();
+
+            // 3. Hard Click (Giả lập chuột thật sự)
+            try {
+                tryAgainBtn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+            } catch(e) {}
+
+            return 'CLICKED_TRY_AGAIN';
+        }
+
+        // --- ƯU TIÊN 3: CHỌN ĐÁP ÁN TRẮC NGHIỆM ---
+        // Chỉ chọn đáp án khi KHÔNG có form cài đặt và KHÔNG có nút Thử lại trên màn hình
+        var choices = document.querySelectorAll('.learn-distractor');
+        if (choices.length > 0 && (!settingsMenu || settingsMenu.offsetParent === null)) {
+            window.guessIndex = window.guessIndex || 0;
+            var safeIndex = window.guessIndex % choices.length; 
+            
+            var targetChoice = choices[safeIndex];
+            
+            // Áp dụng luôn Hard Click cho lúc chọn đáp án cho chắc ăn
+            targetChoice.click();
+            try {
+                targetChoice.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+            } catch(e) {}
+
+            return 'GUESSED_OPTION_' + safeIndex;
+        }
+
+        // --- ƯU TIÊN 4: MỞ CÀI ĐẶT ---
+        if (choices.length === 0) {
+            var gearIcon = document.querySelector('.activity-settings-button');
+            if (gearIcon && gearIcon.offsetParent !== null) {
+                gearIcon.click();
+                return 'OPENED_SETTINGS';
+            }
+        }
+
+        v.play();
     }
     
     return 'PLAYING';
