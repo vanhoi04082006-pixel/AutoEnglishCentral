@@ -1,0 +1,3 @@
+C:\Users\buiva\AutoEnglishCentral\bin\Release\net9.0\win-x64\publish\AutoEnglishCentral.pdb
+C:\Users\buiva\AutoEnglishCentral\bin\Release\net9.0\win-x64\publish\selenium-manager.exe
+C:\Users\buiva\AutoEnglishCentral\bin\Release\net9.0\win-x64\publish\AutoEnglishCentral.exe

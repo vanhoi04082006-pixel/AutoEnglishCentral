@@ -1,0 +1,67 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "AutoEnglishCentral/1.0.0": {
+        "dependencies": {
+          "Selenium.WebDriver": "4.44.0",
+          "Selenium.WebDriver.ChromeDriver": "148.0.7778.16700"
+        },
+        "runtime": {
+          "AutoEnglishCentral.dll": {}
+        }
+      },
+      "Selenium.WebDriver/4.44.0": {
+        "runtime": {
+          "lib/net8.0/Selenium.WebDriver.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/linux/native/selenium-manager": {
+            "rid": "linux",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/osx/native/selenium-manager": {
+            "rid": "osx",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win/native/selenium-manager.exe": {
+            "rid": "win",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "Selenium.WebDriver.ChromeDriver/148.0.7778.16700": {}
+    }
+  },
+  "libraries": {
+    "AutoEnglishCentral/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Selenium.WebDriver/4.44.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-T6SO7JDdCCbyCU008v2+Zl9e3dUM4VgUXrtSgFjILm9Ceifoh3jvV0rkFhbALOPFMvxJhuje3zCqX43jk6Ueaw==",
+      "path": "selenium.webdriver/4.44.0",
+      "hashPath": "selenium.webdriver.4.44.0.nupkg.sha512"
+    },
+    "Selenium.WebDriver.ChromeDriver/148.0.7778.16700": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-A7Tf4tJMVAREFYYdO0s/ISs4+EgcJdQrNI5Ajnqf1FLSDXWt4YDxFb4MQUk+PWjI9b7RkrmnjHBlYU9VbQ8BGw==",
+      "path": "selenium.webdriver.chromedriver/148.0.7778.16700",
+      "hashPath": "selenium.webdriver.chromedriver.148.0.7778.16700.nupkg.sha512"
+    }
+  }
+}
