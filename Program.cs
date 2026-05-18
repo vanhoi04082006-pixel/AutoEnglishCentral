@@ -27,11 +27,23 @@ namespace AutoWatchMultipleVideos
             List<string> videoLinks = new List<string>(urls);
 
             Console.WriteLine($"\nĐã nhận {videoLinks.Count} link.");
+            
+            // --- NHẬP SỐ TAB ---
             Console.Write("Bạn muốn chạy bao nhiêu Tab cùng lúc? (Khuyên dùng: 3-5): ");
             int maxTabs = 3; 
             if (int.TryParse(Console.ReadLine(), out int inputThreads) && inputThreads > 0)
             {
                 maxTabs = inputThreads;
+            }
+
+            // --- NHẬP TỐC ĐỘ PHÁT VIDEO ---
+            Console.Write("Bạn muốn tốc độ phát video là bao nhiêu? (Lưu ý: Tốc độ tốt nhất là x3 trở xuống, VD: 3): ");
+            double playbackSpeed = 3.0; // Tốc độ mặc định nếu người dùng nhập sai
+            string speedInput = Console.ReadLine();
+            // Đảm bảo nhận diện đúng cả dấu chấm và dấu phẩy thập phân tùy theo Culture của máy
+            if (double.TryParse(speedInput.Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double parsedSpeed) && parsedSpeed > 0)
+            {
+                playbackSpeed = parsedSpeed;
             }
 
             // ==========================================
@@ -64,7 +76,7 @@ namespace AutoWatchMultipleVideos
                 Dictionary<string, int> tabErrorCount = new Dictionary<string, int>();
                 int currentLinkIndex = 0;
 
-                Console.WriteLine($"\nĐang bắt đầu cày {videoLinks.Count} link trên {maxTabs} Tab...\n");
+                Console.WriteLine($"\nĐang bắt đầu cày {videoLinks.Count} link trên {maxTabs} Tab với tốc độ x{playbackSpeed}...\n");
 
                 // ==========================================
                 // BƯỚC 2: HÀM HỖ TRỢ MỞ TAB MỚI
@@ -128,7 +140,7 @@ namespace AutoWatchMultipleVideos
                                 if (videos.length === 0) return 'NO_VIDEO';
                                 
                                 var v = videos[0];
-                                v.playbackRate = 5.0; // Ép tốc độ x5
+                                v.playbackRate = " + playbackSpeed.ToString(System.Globalization.CultureInfo.InvariantCulture) + @"; // Tốc độ lấy từ người dùng nhập
 
                                 // Đặt lại bộ nhớ khi video chạy tiếp sang câu mới
                                 if (!v.paused) {
